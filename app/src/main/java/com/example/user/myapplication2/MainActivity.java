@@ -1,6 +1,7 @@
 package com.example.user.myapplication2;
 
 import android.R.drawable;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -174,12 +175,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case (2): // processing the "FORECAST" tab
                     rootView = inflater.inflate(R.layout.forecast_tab, container, false);
-                    // "Weekly forecast for"
-//                    TextView forec = (TextView) rootView.findViewById(R.id.forec);
-//                    forec.setText(getString(R.string.forecast_label));
-//                    // "%CITY_NAME"
-//                    TextView f_city = (TextView) rootView.findViewById(R.id.forec_city);
-//                    f_city.setText(getString(R.string.test_city));
+                    //"Weekly forecast for"
+                    TextView forec = (TextView) rootView.findViewById(R.id.forec_label);
+                    forec.setText(getString(R.string.forecast_label));
+                    // "%CITY_NAME"
+                    TextView f_city = (TextView) rootView.findViewById(R.id.forec_city);
+                    f_city.setText(getString(R.string.test_city));
                     // Forecast List
                     ListView listView = (ListView) rootView.findViewById(R.id.forec_items_list);
                     fillForecastList(listView);
