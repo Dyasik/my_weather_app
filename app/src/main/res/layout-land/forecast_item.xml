@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:rowCount="2"
+    android:columnCount="3"
+    android:id="@+id/forecast_item1"
+    android:paddingTop="@dimen/forec_item_side_padding"
+    android:paddingBottom="@dimen/forec_item_side_padding"
+    android:useDefaultMargins="false">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/test_forec_day"
+        android:id="@+id/forec_item_day"
+        android:textSize="@dimen/forec_item_land_text_size"
+        android:textColor="@android:color/black"
+        android:layout_marginLeft="@dimen/forec_item_side_padding" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/forec_item_ico"
+        android:layout_gravity="center_vertical|right"
+        android:layout_rowSpan="2"
+        android:src="@android:drawable/ic_menu_report_image" />
+
+    <TextView
+        android:layout_width="@dimen/forec_item_temp_width"
+        android:layout_height="wrap_content"
+        android:text="-10°C/-29°C"
+        android:id="@+id/forec_item_temp"
+        android:layout_gravity="center_vertical"
+        android:layout_rowSpan="2"
+        android:textSize="@dimen/forec_item_land_text_size"
+        android:textColor="@android:color/black"
+        android:layout_marginRight="@dimen/forec_item_side_padding"
+        android:layout_marginLeft="@dimen/forec_item_side_padding"
+        android:gravity="right" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/test_forec_date"
+        android:id="@+id/forec_item_date"
+        android:textSize="@dimen/forec_item_land_text_size"
+        android:layout_marginLeft="@dimen/forec_item_side_padding" />
+
+</GridLayout>
