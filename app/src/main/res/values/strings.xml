@@ -1,0 +1,30 @@
+<resources>
+
+    <!-- STATIC_TEXT -->
+    <string name="app_name">My Weather App</string>
+    <string name="action_settings">Settings</string>
+    <string name="tab1">Now</string>
+    <string name="tab2">Forecast</string>
+    <string name="humidity">Humidity:\ </string>
+    <string name="wind">Wind: </string>
+    <string name="clouds">Clouds: </string>
+    <string name="sunrise">Sunrise: </string>
+    <string name="sunset">Sunset: </string>
+    <string name="forecast_label">Weekly forecast for</string>
+    <!-- /STATIC_TEXT -->
+
+    <!-- DYNAMIC_TEXT -->
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="main_temp_format">%1$s°C…%2$s°C</string> <!-- "&#8230;" is "…" -->
+    <!-- /DYNAMIC_TEXT -->
+
+    <!-- TEST -->
+    <string name="test_temp">22°C</string>
+    <string name="test_temp1">20</string>
+    <string name="test_temp2">25</string>
+    <string name="test_city">Izhevsk</string>
+    <string name="test_descr">Partly Cloudy</string>
+    <string name="test_forec_day">Sunday</string>
+    <string name="test_forec_date">7/11</string>
+    <!-- /TEST -->
+</resources>
