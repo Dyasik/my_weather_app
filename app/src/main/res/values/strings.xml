@@ -14,8 +14,10 @@
     <!-- /STATIC_TEXT -->
 
     <!-- DYNAMIC_TEXT -->
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="main_temp_format">%1$s°C…%2$s°C</string> <!-- "&#8230;" is "…" -->
+    <string name="main_temp_format">%1$d°C</string>
+    <string name="main_temp_1_2_format">%1$s°C…%2$s°C</string> <!-- "&#8230;" is "…" -->
+    <string name="main_wind_format">%1$s, %2$s KPH</string>
+    <string name="time_h_m_format">%1$s:%2$s</string>
     <!-- /DYNAMIC_TEXT -->
 
     <!-- TEST -->

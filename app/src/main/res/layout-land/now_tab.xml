@@ -19,7 +19,16 @@
         android:text="@string/test_city"
         android:id="@+id/city"
         android:textSize="20sp"
-        android:layout_columnSpan="2" />
+        android:layout_gravity="center_vertical"/>
+
+    <ImageButton
+        android:id="@+id/refresh_btn"
+        android:src="@android:drawable/ic_popup_sync"
+        android:layout_width="@dimen/now_tab_land_refresh_btn_size"
+        android:layout_height="@dimen/now_tab_land_refresh_btn_size"
+        android:layout_gravity="end"
+        android:onClick="refresh"
+        android:adjustViewBounds="false" />
 
     <ImageView
         android:layout_width="72dp"
@@ -55,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/test_descr"
-        android:id="@+id/textView"
+        android:id="@+id/description"
         android:layout_columnSpan="2"
         android:textSize="24sp"
         android:layout_gravity="center_horizontal" />

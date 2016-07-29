@@ -1,15 +1,23 @@
 package com.example.user.myapplication2;
 
+import android.Manifest;
 import android.R.drawable;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,9 +28,12 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements WeatherProvider.CurrentWeatherListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -38,6 +49,17 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+    /* This one is needed to receive location */
+    private LocationManager locationManager;
+    private Location loca;
+
+    private final String PROVIDER = LocationManager.NETWORK_PROVIDER;
+    private final long TIME_BW_REQS = 0; // minimum time between requests
+    private final float DIST = 0; // distance to do new request
+
+    /* Class' name for Log */
+    private final String CLASS_NAME = getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +79,8 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        /* This one is needed to receive location */
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
     }
 
@@ -164,12 +180,13 @@ public class MainActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = null;
             // switching the tab number
+
             switch (getArguments().getInt(ARG_SECTION_NUMBER))
             {
                 case (1): // processing the "NOW" tab
                     rootView = inflater.inflate(R.layout.now_tab, container, false);
                     TextView appr = (TextView) rootView.findViewById(R.id.appr_temp);
-                    appr.setText(getString(R.string.main_temp_format,
+                    appr.setText(getString(R.string.main_temp_1_2_format,
                             getString(R.string.test_temp1),
                             getString(R.string.test_temp2)));
                     break;
@@ -226,4 +243,142 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
+    public void refresh(View ImgBtn){
+        Log.w(CLASS_NAME, "Refresh started");
+
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                loca = location;
+                Log.w("Debug", "Position received");
+
+                if (loca != null) {
+                    Log.w(CLASS_NAME, "Latitude: " + loca.getLatitude());
+                    Log.w(CLASS_NAME, "Longitude: " + loca.getLongitude());
+                    Log.w(CLASS_NAME, "Time: " + new Date(loca.getTime()));
+                } else {
+                    Log.e(CLASS_NAME, "Location is NULL");
+                }
+
+                try {
+                    locationManager.removeUpdates(this);
+                } catch (SecurityException e) {
+                    Log.e(CLASS_NAME, e.getMessage());
+                }
+
+                requestWeather();
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+        };
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_DENIED) {
+
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    },
+                    1);
+        }
+
+        try {
+            locationManager
+                    .requestLocationUpdates(
+                            PROVIDER,
+                            TIME_BW_REQS,
+                            DIST,
+                            locationListener
+                    );
+        }
+        catch (SecurityException ex){
+            Log.e(CLASS_NAME, ex.getMessage());
+        }
+    }
+
+    private void requestWeather() {
+        WeatherProvider weatherProvider = WeatherProvider.getInstance();
+        weatherProvider.setListener(this);
+        weatherProvider.makeRequest(loca, this);
+    }
+
+    @Override
+    public void onReceivedWeather(ApiResponse weather) {
+        redrawNowFromResponse(weather);
+    }
+
+    public void redrawNowFromResponse(ApiResponse weather) {
+
+        Log.w(CLASS_NAME, "I am in redrawNowFromResponse()");
+
+        TextView city = (TextView) findViewById(R.id.city);
+        TextView main_temp = (TextView) findViewById(R.id.main_temp);
+        TextView descr = (TextView) findViewById(R.id.description);
+        TextView mm_temp = (TextView) findViewById(R.id.appr_temp);
+
+        String main_temp_format = getString(R.string.main_temp_format);
+        String main_wind_format = getString(R.string.main_wind_format);
+        String mm_temp_format = getString(R.string.main_temp_1_2_format);
+
+        city.setText(weather.current_observation.display_location.city);
+
+        main_temp.setText(String.format(
+                Locale.getDefault(),
+                main_temp_format,
+                Math.round(weather.current_observation.temp_c))
+        );
+
+        mm_temp.setText(String.format(
+                Locale.getDefault(),
+                mm_temp_format,
+                weather.forecast.simpleforecast.forecastday.get(0).low.celsius,
+                weather.forecast.simpleforecast.forecastday.get(0).high.celsius)
+        );
+
+        descr.setText(weather.current_observation.weather);
+
+        // PORTRAIT ORIENTATION
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            TextView humidity = (TextView) findViewById(R.id.humidity_val);
+            TextView wind = (TextView) findViewById(R.id.wind_val);
+            TextView sunrise = (TextView) findViewById(R.id.sunrise_val);
+            TextView sunset = (TextView) findViewById(R.id.sunset_val);
+
+            String time_format = getString(R.string.time_h_m_format);
+
+            humidity.setText(weather.current_observation.relative_humidity);
+
+            wind.setText(String.format(
+                    Locale.getDefault(),
+                    main_wind_format,
+                    weather.current_observation.wind_dir,
+                    weather.current_observation.wind_kph)
+            );
+
+            sunrise.setText(String.format(
+                    Locale.getDefault(),
+                    time_format,
+                    weather.sun_phase.sunrise.hour,
+                    weather.sun_phase.sunrise.minute)
+            );
+
+            sunset.setText(String.format(
+                    Locale.getDefault(),
+                    time_format,
+                    weather.sun_phase.sunset.hour,
+                    weather.sun_phase.sunset.minute)
+            );
+        }
+    }
+
 }
