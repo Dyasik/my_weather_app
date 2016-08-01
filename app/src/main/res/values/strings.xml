@@ -11,6 +11,8 @@
     <string name="sunrise">Sunrise: </string>
     <string name="sunset">Sunset: </string>
     <string name="forecast_label">Weekly forecast for</string>
+    <string name="refreshing">Refreshing…</string>
+    <string name="request_error">Failed to refresh weather.</string>
     <!-- /STATIC_TEXT -->
 
     <!-- DYNAMIC_TEXT -->
@@ -18,6 +20,8 @@
     <string name="main_temp_1_2_format">%1$s°C…%2$s°C</string> <!-- "&#8230;" is "…" -->
     <string name="main_wind_format">%1$s, %2$s KPH</string>
     <string name="time_h_m_format">%1$s:%2$s</string>
+    <string name="forec_item_temp_format">%1$s°C/%2$s°C</string>
+    <string name="forec_item_date_format">%1$d/%2$d</string>
     <!-- /DYNAMIC_TEXT -->
 
     <!-- TEST -->
