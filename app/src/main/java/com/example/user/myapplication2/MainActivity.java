@@ -2,32 +2,23 @@ package com.example.user.myapplication2;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Date;
-import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity
-        implements WeatherProvider.WeatherListener {
+public class MainActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -54,7 +45,6 @@ public class MainActivity extends AppCompatActivity
     /* Class' name for Log */
     private final String CLASS_NAME = getClass().getSimpleName();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,35 +66,12 @@ public class MainActivity extends AppCompatActivity
 
         /* This one is needed to receive location */
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-    }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        /*getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;*/
-//        return false; // Menu is not needed yet
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+        refresh(null);
+    }
 
     public void refresh(View ImgBtn){
         Log.w(CLASS_NAME, "Refresh started");
-
-        Toast.makeText(this, R.string.refreshing, Toast.LENGTH_SHORT).show();
 
         LocationListener locationListener = new LocationListener() {
             @Override
@@ -126,7 +93,7 @@ public class MainActivity extends AppCompatActivity
                     Log.e(CLASS_NAME, e.getMessage());
                 }
 
-                requestWeather();
+                WeatherProvider.getInstance().makeRequest(loca, getApplicationContext());
             }
 
             @Override
@@ -164,80 +131,4 @@ public class MainActivity extends AppCompatActivity
             Log.e(CLASS_NAME, ex.getMessage());
         }
     }
-
-    private void requestWeather() {
-        WeatherProvider weatherProvider = WeatherProvider.getInstance();
-        weatherProvider.addListener(this);
-        weatherProvider.makeRequest(loca, this);
-    }
-
-    @Override
-    public void onReceivedWeather(ApiResponse weather) {
-        //redrawNowFromResponse(weather);
-    }
-
-    public void redrawNowFromResponse(ApiResponse weather) {
-
-        Log.w(CLASS_NAME, "I am in redrawNowFromResponse()");
-
-        TextView city = (TextView) findViewById(R.id.city);
-        TextView main_temp = (TextView) findViewById(R.id.main_temp);
-        TextView descr = (TextView) findViewById(R.id.description);
-        TextView mm_temp = (TextView) findViewById(R.id.appr_temp);
-
-        String main_temp_format = getString(R.string.main_temp_format);
-        String main_wind_format = getString(R.string.main_wind_format);
-        String mm_temp_format = getString(R.string.main_temp_1_2_format);
-
-        city.setText(weather.current_observation.display_location.city);
-
-        main_temp.setText(String.format(
-                Locale.getDefault(),
-                main_temp_format,
-                Math.round(weather.current_observation.temp_c))
-        );
-
-        mm_temp.setText(String.format(
-                Locale.getDefault(),
-                mm_temp_format,
-                weather.forecast.simpleforecast.forecastday.get(0).low.celsius,
-                weather.forecast.simpleforecast.forecastday.get(0).high.celsius)
-        );
-
-        descr.setText(weather.current_observation.weather);
-
-        // PORTRAIT ORIENTATION
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            TextView humidity = (TextView) findViewById(R.id.humidity_val);
-            TextView wind = (TextView) findViewById(R.id.wind_val);
-            TextView sunrise = (TextView) findViewById(R.id.sunrise_val);
-            TextView sunset = (TextView) findViewById(R.id.sunset_val);
-
-            String time_format = getString(R.string.time_h_m_format);
-
-            humidity.setText(weather.current_observation.relative_humidity);
-
-            wind.setText(String.format(
-                    Locale.getDefault(),
-                    main_wind_format,
-                    weather.current_observation.wind_dir,
-                    weather.current_observation.wind_kph)
-            );
-
-            sunrise.setText(String.format(
-                    Locale.getDefault(),
-                    time_format,
-                    weather.sun_phase.sunrise.hour,
-                    weather.sun_phase.sunrise.minute)
-            );
-
-            sunset.setText(String.format(
-                    Locale.getDefault(),
-                    time_format,
-                    weather.sun_phase.sunset.hour,
-                    weather.sun_phase.sunset.minute)
-            );
-        }
-    }
-
 }

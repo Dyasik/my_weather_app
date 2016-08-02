@@ -34,9 +34,6 @@ public class ForecastFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.forecast_tab, container, false);
 
-        WeatherProvider wp = WeatherProvider.getInstance();
-        wp.addListener(this);
-
         //"Weekly forecast for"
         forec = (TextView) rootView.findViewById(R.id.forec_label);
         forec.setText(getString(R.string.forecast_label));
@@ -46,6 +43,9 @@ public class ForecastFragment extends Fragment
         // Forecast list
         listView = (ListView) rootView.findViewById(R.id.forec_items_list);
         fillForecastList(listView);
+
+        WeatherProvider wp = WeatherProvider.getInstance();
+        wp.addListener(this);
 
         return rootView;
     }
@@ -86,42 +86,46 @@ public class ForecastFragment extends Fragment
         forecList.add(hm);
     }
 
+
+
     @Override
     public void onReceivedWeather(ApiResponse resp) {
-        forecList = new ArrayList<>();
-        String temp_format = getString(R.string.forec_item_temp_format);
-        String date_format = getString(R.string.forec_item_date_format);
-        ApiResponse.Forecastday2 day;
+        if (isAdded()) {
+            forecList = new ArrayList<>();
+            String temp_format = getString(R.string.forec_item_temp_format);
+            String date_format = getString(R.string.forec_item_date_format);
+            ApiResponse.Forecastday2 day;
 
-        for (int day_count = 1; day_count < 8; day_count++) {
-            day = resp.forecast.simpleforecast.forecastday.get(day_count);
-            addForecastItem(
-                    day.date.weekday,
-                    android.R.drawable.ic_menu_report_image,
-                    String.format(
-                            Locale.getDefault(),
-                            temp_format,
-                            day.high.celsius,
-                            day.low.celsius
-                    ),
-                    String.format(
-                            Locale.getDefault(),
-                            date_format,
-                            day.date.day,
-                            day.date.month
-                    )
+            for (int day_count = 1; day_count < 8; day_count++) {
+                day = resp.forecast.simpleforecast.forecastday.get(day_count);
+                addForecastItem(
+                        day.date.weekday,
+                        android.R.drawable.ic_menu_report_image,
+                        String.format(
+                                Locale.getDefault(),
+                                temp_format,
+                                day.high.celsius,
+                                day.low.celsius
+                        ),
+                        String.format(
+                                Locale.getDefault(),
+                                date_format,
+                                day.date.day,
+                                day.date.month
+                        )
+                );
+            }
+
+            SimpleAdapter adapter = new SimpleAdapter(
+                    super.getContext(),
+                    forecList,
+                    R.layout.forecast_item,
+                    new String[]{DAY, ICON, TEMP, DATE},
+                    new int[]{R.id.forec_item_day, R.id.forec_item_ico,
+                            R.id.forec_item_temp, R.id.forec_item_date}
             );
+
+            listView.setAdapter(adapter);
         }
-
-        SimpleAdapter adapter = new SimpleAdapter(
-                super.getContext(),
-                forecList,
-                R.layout.forecast_item,
-                new String[]{DAY, ICON, TEMP, DATE},
-                new int[]{R.id.forec_item_day, R.id.forec_item_ico,
-                        R.id.forec_item_temp, R.id.forec_item_date}
-        );
-
-        listView.setAdapter(adapter);
     }
 }

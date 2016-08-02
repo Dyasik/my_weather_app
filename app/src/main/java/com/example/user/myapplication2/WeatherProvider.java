@@ -15,11 +15,8 @@ import com.google.gson.GsonBuilder;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.function.Predicate;
 
 public class WeatherProvider {
 
@@ -48,18 +45,19 @@ public class WeatherProvider {
 
     private ApiResponse apiResponse;
 
-    //private long lastRequestTime = -1;
+    private long lastRequestTime = -1;
     private final long MIN_REQUEST_PERIOD = 10 * 60 * 1000; // 10 mins
 
     public void addListener(WeatherListener rl) {
+        if (apiResponse != null) rl.onReceivedWeather(apiResponse);
         listeners.add(new WeakReference<>(rl));
     }
 
     public void makeRequest(Location location, final Context context) {
 
-        //if (lastRequestTime == -1 || location.getTime() - lastRequestTime > MIN_REQUEST_PERIOD) {
+        if (lastRequestTime == -1 || location.getTime() - lastRequestTime > MIN_REQUEST_PERIOD) {
             // Remember last request time
-            //lastRequestTime = location.getTime();
+            lastRequestTime = location.getTime();
 
             // Instantiate the RequestQueue
             RequestQueue queue = Volley.newRequestQueue(context);
@@ -104,9 +102,9 @@ public class WeatherProvider {
             // Add the request to the RequestQueue.
             queue.add(request);
 
-        //} else {
-        //    respond(apiResponse);
-        //}
+        } /*else {
+            respond(apiResponse);
+        }*/
     }
 
     private void respond(ApiResponse response) {
@@ -115,7 +113,9 @@ public class WeatherProvider {
             if (wr.get() == null) ind.add(listeners.indexOf(wr));
             else wr.get().onReceivedWeather(response);
         }
-        for (int i: ind) { listeners.remove(i); }
+        for (int i = ind.size() - 1; i >= 0; --i) {
+            listeners.remove((int)ind.get(i));
+        }
     }
 
 }
