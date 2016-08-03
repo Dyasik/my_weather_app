@@ -7,11 +7,11 @@
     <!-- Forecast items' params -->
     <dimen name="forec_item_side_padding">10dp</dimen>
     <dimen name="forec_item_temp_width">128dp</dimen>
-    <!-- Forecast landscape dimens -->
     <dimen name="forec_land_labels_size">15sp</dimen>
     <dimen name="forec_item_land_text_size">10sp</dimen>
     <!-- Now tab's dimens -->
     <dimen name="now_tab_refresh_btn_size">40dp</dimen>
     <dimen name="now_tab_land_refresh_btn_size">35dp</dimen>
     <dimen name="now_tab_icon_size">60dp</dimen>
+    <!-- Main activity header -->
 </resources>
