@@ -44,6 +44,10 @@ public class ForecastFragment extends Fragment
     // How many days should be shown in the list
     private final byte LIST_SIZE = 7;
 
+    private HashMap<String, Object>[] array;
+    //private ApiResponse.Forecastday2 day;
+    //private int COUNTER;
+
     // For requesting images
     //private Object icon;
     //private ApiResponse.Forecastday2 day;
@@ -143,41 +147,111 @@ public class ForecastFragment extends Fragment
 
             listView.setAdapter(adapter);
 
-            updateList(resp);
+//            array = new HashMap[LIST_SIZE];
+//            for (int i = 0; i < LIST_SIZE; i++) { array[i] = new HashMap<>(); }
+
+            updateList(resp, 0);
         }
     }
 
-    private void updateList(ApiResponse response) {
-        View item;
-        for (int i = 0; i < LIST_SIZE; i++) {
-            item = listView.getChildAt(i);
-            if (item == null) {
-                Log.e("DEB", "Item is null at index " + i);
-                continue;
-            }
-            final ImageView icon = (ImageView) item.findViewById(R.id.forec_item_ico);
-            if (icon == null) {
-                Log.e("DEB", "Icon is null");
-                continue;
-            }
-            ImageRequest request = new ImageRequest(
-                   response.forecast.simpleforecast.forecastday.get(i + 1).icon_url,
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap bitmap) {
-                            icon.setImageBitmap(bitmap);
-                        }
-                    }, 0, 0, null, Bitmap.Config.RGB_565,
-                    new Response.ErrorListener() {
-                        public void onErrorResponse(VolleyError error) {
-                            icon.setImageResource(android.R.drawable.ic_menu_report_image);
-                        }
+    private void updateList(final ApiResponse response, final int ind) {
+
+        Log.w("DEB", "I'm in updateList(), index " + ind);
+
+        ApiResponse.Forecastday2 day = response.forecast.simpleforecast.forecastday.get(ind + 1);
+
+//        array[ind].put(DAY, day.date.day);
+//        array[ind].put(TEMP,
+//                String.format(
+//                        Locale.getDefault(),
+//                        temp_format,
+//                        day.high.celsius,
+//                        day.low.celsius
+//                )
+//        );
+//        array[ind].put(DATE,
+//                String.format(
+//                        Locale.getDefault(),
+//                        date_format,
+//                        day.date.day,
+//                        day.date.month
+//                )
+//        );
+
+        ImageRequest request = new ImageRequest(
+                day.icon_url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap bitmap) {
+                        forecList.get(ind).put(ICON, bitmap);
+                        if (ind == LIST_SIZE - 1) {
+                            listView.setAdapter(new SimpleAdapter(
+                                    getContext(),
+                                    forecList,
+                                    R.layout.forecast_item,
+                                    new String[]{DAY, ICON, TEMP, DATE},
+                                    new int[]{R.id.forec_item_day, R.id.forec_item_ico,
+                                            R.id.forec_item_temp, R.id.forec_item_date}
+                            ));
+                        } else
+                            updateList(response, ind + 1);
                     }
-            );
+                }, 0, 0, null, Bitmap.Config.RGB_565,
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        forecList.get(ind).put(ICON,
+                                getResources()
+                                        .getDrawable(R.mipmap.ic_launcher));
+                        if (ind == LIST_SIZE - 1) {
+                            listView.setAdapter(new SimpleAdapter(
+                                    getContext(),
+                                    forecList,
+                                    R.layout.forecast_item,
+                                    new String[]{DAY, ICON, TEMP, DATE},
+                                    new int[]{R.id.forec_item_day, R.id.forec_item_ico,
+                                            R.id.forec_item_temp, R.id.forec_item_date}
+                            ));
+                        } else
+                            updateList(response, ind + 1);
+//                            array[COUNTER].put(ICON,
+//                                    getResources()
+//                                            .getDrawable(android.R.drawable.ic_menu_report_image));
+                    }
+                }
+        );
 
-            Volley.newRequestQueue(getContext()).add(request);
+        Volley.newRequestQueue(getContext()).add(request);
 
-        }
+//        View item;
+//        for (int i = 0; i < LIST_SIZE; i++) {
+//            item = listView.getChildAt(i);
+//            if (item == null) {
+//                Log.e("DEB", "Item is null at index " + i);
+//                continue;
+//            }
+//            final ImageView icon = (ImageView) item.findViewById(R.id.forec_item_ico);
+//            if (icon == null) {
+//                Log.e("DEB", "Icon is null");
+//                continue;
+//            }
+//            ImageRequest request = new ImageRequest(
+//                   response.forecast.simpleforecast.forecastday.get(i + 1).icon_url,
+//                    new Response.Listener<Bitmap>() {
+//                        @Override
+//                        public void onResponse(Bitmap bitmap) {
+//                            icon.setImageBitmap(bitmap);
+//                        }
+//                    }, 0, 0, null, Bitmap.Config.RGB_565,
+//                    new Response.ErrorListener() {
+//                        public void onErrorResponse(VolleyError error) {
+//                            icon.setImageResource(android.R.drawable.ic_menu_report_image);
+//                        }
+//                    }
+//            );
+//
+//            Volley.newRequestQueue(getContext()).add(request);
+//
+//        }
     }
 
 //    private void addNext(final ApiResponse resp, final int itemNum){
