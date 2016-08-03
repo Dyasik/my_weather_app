@@ -13,6 +13,7 @@
     <string name="forecast_label">Weekly forecast for</string>
     <string name="refreshing">Refreshing…</string>
     <string name="request_error">Failed to refresh weather.</string>
+    <string name="no_network">No network connection.</string>
     <!-- /STATIC_TEXT -->
 
     <!-- DYNAMIC_TEXT -->
@@ -25,12 +26,14 @@
     <!-- /DYNAMIC_TEXT -->
 
     <!-- TEST -->
-    <string name="test_temp">22°C</string>
-    <string name="test_temp1">20</string>
-    <string name="test_temp2">25</string>
-    <string name="test_city">Izhevsk</string>
-    <string name="test_descr">Partly Cloudy</string>
-    <string name="test_forec_day">Sunday</string>
-    <string name="test_forec_date">7/11</string>
+    <string name="test_temp">--°C</string>
+    <string name="test_temp_appr">--°C…--°C</string>
+    <string name="test_city">---</string>
+    <string name="test_descr">---</string>
+    <string name="test_forec_day">---</string>
+    <string name="test_forec_date">--/--</string>
+    <string name="test_humidity">--%</string>
+    <string name="test_wind">NSWE, -.- KPH</string>
+    <string name="test_time">--:--</string>
     <!-- /TEST -->
 </resources>

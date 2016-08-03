@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -67,10 +68,15 @@ public class MainActivity extends AppCompatActivity {
         /* This one is needed to receive location */
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        refresh(null);
+        refresh();
     }
 
-    public void refresh(View ImgBtn){
+    public void onRefreshClick(View btn) {
+        Toast.makeText(this, R.string.refreshing, Toast.LENGTH_SHORT).show();
+        refresh();
+    }
+
+    public void refresh(){
         Log.w(CLASS_NAME, "Refresh started");
 
         LocationListener locationListener = new LocationListener() {
@@ -97,7 +103,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onProviderDisabled(String provider) {}
+            public void onProviderDisabled(String provider) {
+                Toast.makeText(getApplicationContext(),
+                        R.string.no_network,
+                        Toast.LENGTH_SHORT).show();
+            }
 
             @Override
             public void onProviderEnabled(String provider) {}

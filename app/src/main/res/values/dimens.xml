@@ -13,4 +13,5 @@
     <!-- Now tab's dimens -->
     <dimen name="now_tab_refresh_btn_size">40dp</dimen>
     <dimen name="now_tab_land_refresh_btn_size">35dp</dimen>
+    <dimen name="now_tab_icon_size">60dp</dimen>
 </resources>

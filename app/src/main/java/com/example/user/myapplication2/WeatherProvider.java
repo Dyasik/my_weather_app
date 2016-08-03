@@ -45,7 +45,7 @@ public class WeatherProvider {
 
     private ApiResponse apiResponse;
 
-    private long lastRequestTime = -1;
+    private long lastRequestTime;
     private final long MIN_REQUEST_PERIOD = 10 * 60 * 1000; // 10 mins
 
     public void addListener(WeatherListener rl) {
@@ -55,7 +55,7 @@ public class WeatherProvider {
 
     public void makeRequest(Location location, final Context context) {
 
-        if (lastRequestTime == -1 || location.getTime() - lastRequestTime > MIN_REQUEST_PERIOD) {
+        if (apiResponse == null || location.getTime() - lastRequestTime > MIN_REQUEST_PERIOD) {
             // Remember last request time
             lastRequestTime = location.getTime();
 

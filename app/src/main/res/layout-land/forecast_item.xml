@@ -29,7 +29,7 @@
     <TextView
         android:layout_width="@dimen/forec_item_temp_width"
         android:layout_height="wrap_content"
-        android:text="-10°C/-29°C"
+        android:text="@string/test_temp_appr"
         android:id="@+id/forec_item_temp"
         android:layout_gravity="center_vertical"
         android:layout_rowSpan="2"

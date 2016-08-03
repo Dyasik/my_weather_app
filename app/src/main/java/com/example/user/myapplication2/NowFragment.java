@@ -1,13 +1,20 @@
 package com.example.user.myapplication2;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 
 import java.util.Locale;
 
@@ -22,6 +29,7 @@ public class NowFragment extends Fragment implements
     private TextView main_temp;
     private TextView mm_temp;
     private TextView descr;
+    private ImageView icon;
     // Now tab's additional fields (port)
     private TextView humidity;
     private TextView wind;
@@ -39,25 +47,24 @@ public class NowFragment extends Fragment implements
 		main_temp = (TextView) rootView.findViewById(R.id.main_temp);
 		mm_temp = (TextView) rootView.findViewById(R.id.appr_temp);
 		descr = (TextView) rootView.findViewById(R.id.description);
+        icon = (ImageView) rootView.findViewById(R.id.weather_icon);
         // Now tab's additional fields (port)
 		humidity = (TextView) rootView.findViewById(R.id.humidity_val);
 		wind = (TextView) rootView.findViewById(R.id.wind_val);
 		sunrise = (TextView) rootView.findViewById(R.id.sunrise_val);
 		sunset = (TextView) rootView.findViewById(R.id.sunset_val);
 
-        WeatherProvider wp = WeatherProvider.getInstance();
-        wp.addListener(this);
+        WeatherProvider.getInstance().addListener(this);
 
         return rootView;
     }
-
-
 
     @Override
     public void onReceivedWeather(ApiResponse now) {
 
         if (isAdded()) {
-            //Log.w(CLASS_NAME, "Refreshing fields contents");
+
+            requestImage(now.current_observation.icon_url);
 
             String main_temp_format = getString(R.string.main_temp_format);
             String main_wind_format = getString(R.string.main_wind_format);
@@ -109,5 +116,23 @@ public class NowFragment extends Fragment implements
                 );
             }
         }
+    }
+
+    private void requestImage(String url){
+        ImageRequest request = new ImageRequest(url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap bitmap) {
+                        icon.setImageBitmap(bitmap);
+                    }
+                }, 0, 0, null, Bitmap.Config.RGB_565,
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        icon.setImageResource(android.R.drawable.ic_menu_report_image);
+                    }
+                }
+        );
+
+        Volley.newRequestQueue(getContext()).add(request);
     }
 }
