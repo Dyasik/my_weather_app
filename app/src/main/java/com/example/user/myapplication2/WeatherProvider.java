@@ -102,9 +102,7 @@ public class WeatherProvider {
             // Add the request to the RequestQueue.
             queue.add(request);
 
-        } /*else {
-            respond(apiResponse);
-        }*/
+        }
     }
 
     private void respond(ApiResponse response) {
